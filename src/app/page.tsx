@@ -1,65 +1,272 @@
+"use client";
+
+import { useState } from "react";
 import Image from "next/image";
+import { useGameState } from "@/lib/useGameState";
+import Board from "@/components/Board";
+import ClueModal from "@/components/ClueModal";
+import GameRules from "@/components/GameRules";
+import TeamBar from "@/components/TeamBar";
+import FinalJeopardy from "@/components/FinalJeopardy";
 
 export default function Home() {
+  const game = useGameState();
+  const { state, hydrated } = game;
+  const [selectingTeam, setSelectingTeam] = useState<number | null>(null);
+  const [resetMode, setResetMode] = useState(false);
+  const [pendingQuestion, setPendingQuestion] = useState<{
+    category: string;
+    points: number;
+  } | null>(null);
+
+  if (!hydrated) {
+    return (
+      <div className="flex-1 flex items-center justify-center">
+        <div className="text-dusty text-xl animate-pulse">Loading...</div>
+      </div>
+    );
+  }
+
+  const handleCellClick = (category: string, points: number) => {
+    if (state.teams.length === 0) return;
+    setResetMode(false);
+    setPendingQuestion({ category, points });
+    setSelectingTeam(null);
+  };
+
+  const handleQuestionReset = (category: string, points: number) => {
+    game.resetQuestion(category, points);
+    setPendingQuestion(null);
+    setSelectingTeam(null);
+    setResetMode(false);
+  };
+
+  const handleCurrentQuestionReset = () => {
+    if (!state.currentQuestion) return;
+    handleQuestionReset(state.currentQuestion.category, state.currentQuestion.points);
+  };
+
+  const confirmTeamAndOpen = () => {
+    if (pendingQuestion && selectingTeam !== null) {
+      game.selectQuestion(
+        pendingQuestion.category,
+        pendingQuestion.points,
+        selectingTeam
+      );
+      setPendingQuestion(null);
+      setSelectingTeam(null);
+    }
+  };
+
+  const isSetup = state.phase === "setup";
+  const isBoard = state.phase === "board";
+  const showClue = state.phase === "clue" || state.phase === "answer";
+  const isPlayPhase = isBoard || showClue;
+  const isFinal =
+    state.phase === "finalWager" ||
+    state.phase === "finalClue" ||
+    state.phase === "finalReveal" ||
+    state.phase === "winner";
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div
+      className={`flex-1 flex flex-col relative z-10 ${
+        isPlayPhase
+          ? "px-3 py-3 md:px-4 md:py-4 gap-3 md:gap-4"
+          : "p-4 md:p-6 gap-6"
+      }`}
+    >
+      {/* Header */}
+      <header className="text-center">
+        <div
+          className={`flex items-center justify-center mb-2 ${
+            isPlayPhase ? "gap-3" : "gap-4"
+          }`}
+        >
+          <span className="text-dusty/60 text-2xl animate-float">☽</span>
+          <Image
+            src="/jess-avatar.png"
+            alt="Jess"
+            width={isPlayPhase ? 56 : 72}
+            height={isPlayPhase ? 56 : 72}
+            className="rounded-full border-3 border-lilac shadow-lg shadow-lavender/30"
+          />
+          <span className="text-dusty/60 text-xl animate-float" style={{ animationDelay: "0.5s" }}>
+            ✦
+          </span>
+        </div>
+        <h1
+          className={`font-extrabold bg-gradient-to-r from-surface-deep via-glow-pink to-surface-deep bg-clip-text text-transparent animate-shimmer ${
+            isPlayPhase ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl"
+          }`}
+        >
+          Jess-pardy!
+        </h1>
+        <p className={`text-dusty mt-1 ${isPlayPhase ? "text-xs" : "text-sm"}`}>
+          Happy Birthday, Jess! 🎂
+        </p>
+      </header>
+
+      <GameRules compact={isPlayPhase} />
+
+      {/* Team bar */}
+      <TeamBar
+        teams={state.teams}
+        onAdd={game.addTeam}
+        onRemove={game.removeTeam}
+        onAdjust={game.adjustScore}
+        isSetup={isSetup}
+        compact={isPlayPhase}
+      />
+
+      {/* Setup screen */}
+      {isSetup && (
+        <div className="text-center">
+          <p className="text-ink mb-4">
+            Add at least 2 teams to begin!
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+          <button
+            onClick={game.startGame}
+            disabled={state.teams.length < 2}
+            className={`px-8 py-3 rounded-xl font-bold text-lg transition-all cursor-pointer ${
+              state.teams.length >= 2
+                ? "bg-gradient-to-r from-lavender to-lilac text-snow shadow-lg shadow-lavender/30 hover:shadow-xl hover:shadow-lavender/50"
+                : "bg-dusty/20 text-dusty/50 cursor-not-allowed"
+            }`}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            Start Game
+          </button>
         </div>
-      </main>
+      )}
+
+      {/* Board */}
+      {(isBoard || showClue) && (
+        <div className="flex flex-col flex-1 min-h-0 justify-start gap-3">
+          <Board
+            answeredQuestions={state.answeredQuestions}
+            resetMode={resetMode}
+            compact
+            onSelect={handleCellClick}
+            onReset={handleQuestionReset}
+          />
+
+          {/* Action bar below board */}
+          <div className="flex flex-col items-center gap-3">
+            {resetMode && (
+              <p className="text-xs md:text-sm text-dusty italic text-center">
+                Tap any played question to put it back on the board. Scores can
+                still be adjusted above if needed.
+              </p>
+            )}
+            <div className="flex flex-wrap justify-center gap-2.5 md:gap-3">
+              <button
+                onClick={() => setResetMode((enabled) => !enabled)}
+                className={`px-4 py-2 md:px-5 rounded-xl font-semibold text-xs md:text-sm transition-colors cursor-pointer border ${
+                  resetMode
+                    ? "bg-amber-500/20 hover:bg-amber-500/30 text-amber-200 border-amber-300/40"
+                    : "bg-amber-100/60 hover:bg-amber-100/80 text-amber-900 border-amber-200/60"
+                }`}
+              >
+                {resetMode ? "Done Resetting Questions" : "Reset One Question"}
+              </button>
+              <button
+                onClick={game.startFinalJeopardy}
+                className="px-4 py-2 md:px-5 rounded-xl bg-lavender/40 hover:bg-lavender/60 text-surface-deep font-semibold text-xs md:text-sm transition-all cursor-pointer border border-lavender/50"
+              >
+                Final Jess-pardy
+              </button>
+              <button
+                onClick={game.resetGame}
+                className="px-4 py-2 md:px-5 rounded-xl bg-rose-200/50 hover:bg-rose-200/70 text-rose-700 font-semibold text-xs md:text-sm transition-colors cursor-pointer border border-rose-300/40"
+              >
+                Reset Game
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Team picker modal */}
+      {pendingQuestion && (
+        <div className="fixed inset-0 z-40 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+          <div className="bg-gradient-to-br from-surface to-surface-deep rounded-2xl shadow-2xl border border-lilac/20 max-w-md w-full p-6 backdrop-blur-md">
+            <h3 className="text-lg font-bold text-snow text-center mb-1">
+              {pendingQuestion.category} for ${pendingQuestion.points}
+            </h3>
+            <p className="text-lavender text-sm text-center mb-4">
+              Which team is selecting this question?
+            </p>
+            <div className="grid grid-cols-2 gap-3 mb-4">
+              {state.teams.map((team, i) => (
+                <button
+                  key={i}
+                  onClick={() => setSelectingTeam(i)}
+                  className={`py-3 px-4 rounded-xl font-semibold transition-all cursor-pointer truncate ${
+                    selectingTeam === i
+                      ? "bg-lavender text-surface-deep shadow-md shadow-lavender/30"
+                      : "bg-surface-deep/60 text-snow hover:bg-surface-deep/80"
+                  }`}
+                >
+                  {team.name}
+                </button>
+              ))}
+            </div>
+            <div className="flex gap-3">
+              <button
+                onClick={() => setPendingQuestion(null)}
+                className="flex-1 py-2 rounded-xl bg-surface-deep/50 text-snow font-semibold transition-colors cursor-pointer hover:bg-surface-deep/70"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmTeamAndOpen}
+                disabled={selectingTeam === null}
+                className={`flex-1 py-2 rounded-xl font-bold transition-all cursor-pointer ${
+                  selectingTeam !== null
+                    ? "bg-lavender hover:bg-lavender/80 text-surface-deep shadow-md shadow-lavender/20"
+                    : "bg-dusty/20 text-dusty/50 cursor-not-allowed"
+                }`}
+              >
+                Open Clue
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Clue modal */}
+      {showClue && state.currentQuestion && (
+        <ClueModal
+          question={state.currentQuestion}
+          showAnswer={state.showAnswer}
+          teams={state.teams}
+          selectingTeamIndex={state.selectingTeamIndex}
+          onReveal={game.revealAnswer}
+          onAward={game.awardPoints}
+          onClose={game.closeQuestion}
+          onReset={handleCurrentQuestionReset}
+        />
+      )}
+
+      {/* Final Jeopardy */}
+      {isFinal && (
+        <FinalJeopardy
+          phase={state.phase}
+          teams={state.teams}
+          data={game.finalJeopardyData}
+          wagers={state.finalWagers}
+          locked={state.finalLocked}
+          correct={state.finalCorrect}
+          onSetWager={game.setFinalWager}
+          onLockWager={game.lockFinalWager}
+          onRevealClue={game.revealFinalClue}
+          onCancel={game.cancelFinalJeopardy}
+          onSetCorrect={game.setFinalCorrect}
+          onScore={game.scoreFinalJeopardy}
+          onShowWinner={game.showWinner}
+          onReset={game.resetGame}
+        />
+      )}
     </div>
   );
 }
