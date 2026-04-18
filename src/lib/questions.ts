@@ -237,7 +237,7 @@ export const QUESTIONS: Question[] = [
 ];
 
 export const FINAL_JEOPARDY: FinalJeopardyData = {
-  clue: "Draw her favorite pokemon. (Teams wager points first!)",
+  clue: "Draw her favorite pokemon.",
   answer: "Jess will judge the responses.",
 };
 
