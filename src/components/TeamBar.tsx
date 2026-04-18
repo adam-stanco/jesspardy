@@ -36,7 +36,7 @@ export default function TeamBar({
       <div
         className={`items-end ${
           fullscreen
-            ? "flex w-full flex-nowrap justify-center gap-2 px-1"
+            ? "flex w-full flex-nowrap justify-center gap-3 px-1"
             : compact
               ? "flex w-max min-w-full flex-nowrap justify-center gap-2.5 px-1"
               : "flex flex-wrap justify-center gap-4"
@@ -47,7 +47,7 @@ export default function TeamBar({
             key={i}
             className={`board-card rounded-xl text-center relative group transition-transform duration-200 hover:-translate-y-1 ${
               fullscreen
-                ? "p-1.5 min-w-[110px] flex-1 max-w-[180px]"
+                ? "p-2.5 min-w-[160px] flex-1 max-w-[260px]"
                 : compact
                   ? "p-2 min-w-[138px]"
                   : "p-3 min-w-[170px]"
@@ -63,31 +63,31 @@ export default function TeamBar({
             )}
             <div
               className={`board-header rounded-lg ${
-                fullscreen ? "px-1.5 py-1 mb-1" : compact ? "px-2 py-1.5 mb-2" : "px-3 py-2 mb-3"
+                fullscreen ? "px-2.5 py-1.5 mb-1.5" : compact ? "px-2 py-1.5 mb-2" : "px-3 py-2 mb-3"
               }`}
             >
-              <p className={`block-text-header truncate ${fullscreen ? "text-[0.6rem]" : compact ? "text-[0.65rem]" : "text-xs"}`}>
+              <p className={`block-text-header truncate ${fullscreen ? "text-xs" : compact ? "text-[0.65rem]" : "text-xs"}`}>
                 {team.name}
               </p>
             </div>
             <p
-              className={`${fullscreen ? "text-xl md:text-2xl" : compact ? "text-2xl md:text-3xl" : "text-3xl md:text-4xl"} font-extrabold ${
+              className={`${fullscreen ? "text-2xl md:text-3xl" : compact ? "text-2xl md:text-3xl" : "text-3xl md:text-4xl"} font-extrabold ${
                 team.score < 0 ? "team-score-negative" : "block-text-value"
               }`}
             >
               ${team.score.toLocaleString()}
             </p>
             {!isSetup && (
-              <div className={`flex items-center justify-center gap-2 ${fullscreen ? "mt-1" : compact ? "mt-2" : "mt-3"}`}>
+              <div className={`flex items-center justify-center gap-2 ${fullscreen ? "mt-1.5" : compact ? "mt-2" : "mt-3"}`}>
                 <button
                   onClick={() => onAdjust(i, -100)}
-                  className={`${fullscreen ? "w-6 h-6 text-sm" : compact ? "w-7 h-7 text-base" : "w-8 h-8 text-lg"} rounded-full bg-rose-500/50 hover:bg-rose-500/80 text-white font-bold transition-colors cursor-pointer`}
+                  className={`${fullscreen ? "w-7 h-7 text-base" : compact ? "w-7 h-7 text-base" : "w-8 h-8 text-lg"} rounded-full bg-rose-500/50 hover:bg-rose-500/80 text-white font-bold transition-colors cursor-pointer`}
                 >
                   −
                 </button>
                 <button
                   onClick={() => onAdjust(i, 100)}
-                  className={`${fullscreen ? "w-6 h-6 text-sm" : compact ? "w-7 h-7 text-base" : "w-8 h-8 text-lg"} rounded-full bg-emerald-500/50 hover:bg-emerald-500/80 text-white font-bold transition-colors cursor-pointer`}
+                  className={`${fullscreen ? "w-7 h-7 text-base" : compact ? "w-7 h-7 text-base" : "w-8 h-8 text-lg"} rounded-full bg-emerald-500/50 hover:bg-emerald-500/80 text-white font-bold transition-colors cursor-pointer`}
                 >
                   +
                 </button>

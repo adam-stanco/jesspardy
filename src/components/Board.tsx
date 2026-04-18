@@ -32,7 +32,7 @@ export default function Board({
       <div
         className={`board-grid grid grid-cols-5 ${
           fullscreen
-            ? "gap-1 md:gap-1.5 fullscreen-grid"
+            ? "gap-[3px] md:gap-1 fullscreen-grid"
             : compact
               ? "gap-1.5 md:gap-2.5"
               : "gap-2.5 md:gap-3.5"
@@ -41,9 +41,9 @@ export default function Board({
         {CATEGORIES.map((cat) => (
           <div
             key={cat}
-            className={`board-header rounded-xl text-center flex items-center justify-center ${
+            className={`board-header ${fullscreen ? "rounded-lg" : "rounded-xl"} text-center flex items-center justify-center ${
               fullscreen
-                ? "px-2 py-2 min-h-[2.25rem]"
+                ? "px-2 py-1.5"
                 : compact
                   ? "px-1.5 py-2.5 md:px-2.5 md:py-3 min-h-[2.75rem]"
                   : "px-2 py-3 md:px-3 md:py-3.5 min-h-[3.25rem]"
@@ -52,7 +52,7 @@ export default function Board({
             <span
               className={`leading-tight block-text-header ${
                 fullscreen
-                  ? "text-xs sm:text-sm md:text-base"
+                  ? "text-sm sm:text-base md:text-lg"
                   : compact
                     ? "text-[0.6rem] sm:text-[0.65rem] md:text-xs"
                     : "text-[0.68rem] sm:text-xs md:text-sm"
@@ -85,7 +85,7 @@ export default function Board({
                   answered && resetMode ? onReset(cat, pts) : onSelect(cat, pts)
                 }
                 className={`
-                  rounded-xl ${fullscreen ? "text-2xl md:text-3xl lg:text-4xl" : compact ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"}
+                  ${fullscreen ? "rounded-lg" : "rounded-xl"} ${fullscreen ? "text-2xl md:text-3xl lg:text-4xl" : compact ? "text-xl md:text-2xl" : "text-2xl md:text-3xl"}
                   ${fullscreen ? "" : "aspect-[4/3]"}
                   transition-all duration-200 ease-out cursor-pointer
                   flex items-center justify-center

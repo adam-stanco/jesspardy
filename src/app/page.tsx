@@ -176,7 +176,7 @@ export default function Home() {
 
       {/* Board */}
       {(isBoard || showClue) && (
-        <div className={`flex flex-col flex-1 min-h-0 justify-start ${isFullscreen ? "gap-1.5" : "gap-3"}`}>
+        <div className={`flex flex-col min-h-0 justify-start ${isFullscreen ? "flex-1 gap-1" : "flex-1 gap-3"}`}>
           <Board
             answeredQuestions={state.answeredQuestions}
             resetMode={resetMode}

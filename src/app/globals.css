@@ -222,7 +222,7 @@ body::before {
 
 .fullscreen-grid {
   height: 100%;
-  grid-template-rows: auto repeat(5, 1fr);
+  grid-template-rows: auto repeat(5, minmax(0, 1fr));
 }
 
 .board-header {
