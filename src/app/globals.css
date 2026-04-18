@@ -26,6 +26,40 @@ body {
   font-family: var(--font-sans), system-ui, sans-serif;
 }
 
+html::backdrop {
+  background: linear-gradient(to bottom, #C8B6FF 0%, #D6C6F5 40%, #F3E8FF 100%);
+}
+
+html:fullscreen {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #C8B6FF 0%, #D6C6F5 40%, #F3E8FF 100%);
+}
+
+html:fullscreen body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+html:-webkit-full-screen {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(to bottom, #C8B6FF 0%, #D6C6F5 40%, #F3E8FF 100%);
+}
+
+html:-webkit-full-screen body {
+  height: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+}
+
 body::before {
   content: "";
   position: fixed;
@@ -179,7 +213,11 @@ body::before {
 /* Fullscreen mode: fit entire board + teams on screen without scrolling */
 .fullscreen-board {
   height: 100vh;
+  height: 100dvh;
+  width: 100vw;
+  width: 100dvw;
   overflow: hidden;
+  box-sizing: border-box;
 }
 
 .fullscreen-grid {

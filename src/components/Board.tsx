@@ -23,7 +23,7 @@ export default function Board({
     <div
       className={`w-full mx-auto ${
         fullscreen
-          ? "max-w-[95vw] flex-1"
+          ? "max-w-full flex-1"
           : compact
             ? "max-w-[42rem] md:max-w-[44rem] xl:max-w-[48rem]"
             : "max-w-5xl"

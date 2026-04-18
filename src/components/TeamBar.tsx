@@ -32,7 +32,7 @@ export default function TeamBar({
   };
 
   return (
-    <div className={`w-full ${fullscreen ? "max-w-[95vw]" : "max-w-5xl"} mx-auto ${compact ? "overflow-x-auto pt-1 pb-1" : ""}`}>
+    <div className={`w-full ${fullscreen ? "max-w-full" : "max-w-5xl"} mx-auto ${compact ? "overflow-x-auto pt-1 pb-1" : ""}`}>
       <div
         className={`items-end ${
           fullscreen

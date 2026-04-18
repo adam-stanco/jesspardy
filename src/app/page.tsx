@@ -74,7 +74,7 @@ export default function Home() {
     <div
       className={`flex-1 flex flex-col relative z-10 ${
         isFullscreen && isPlayPhase
-          ? "fullscreen-board px-2 py-2 gap-1.5"
+          ? "fullscreen-board px-3 py-2 gap-1.5"
           : isPlayPhase
             ? "px-3 py-3 md:px-4 md:py-4 gap-3 md:gap-4"
             : "p-4 md:p-6 gap-6"
