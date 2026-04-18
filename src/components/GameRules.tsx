@@ -1,7 +1,6 @@
 "use client";
 
-// Quick reference for the host and teams during play.
-// Gives a short overview of the game and then lists the key rules.
+// In-app rules panel: short game overview plus a step-by-step "How A Round Works" list.
 
 const OVERVIEW = {
   title: "What Is Jess-pardy?",
@@ -43,29 +42,6 @@ const HOW_IT_WORKS: { label: string; body: string }[] = [
   },
 ];
 
-const RULES = [
-  {
-    title: "Starting",
-    body: "Rock-Paper-Scissors decides who picks the first category.",
-  },
-  {
-    title: "Gameplay",
-    body: "All teams can answer. Correct answers add points. Incorrect answers subtract points.",
-  },
-  {
-    title: "Turn Control",
-    body: "The team with the last correct answer picks next. If nobody got it right, the team with the highest score picks.",
-  },
-  {
-    title: "Jess Challenges",
-    body: "Only the selecting team plays. A success earns double points, and there is no penalty for failing.",
-  },
-  {
-    title: "Final Jess-pardy",
-    body: "Each team can wager any amount up to its current total score. The highest total after scoring wins.",
-  },
-];
-
 type Props = {
   compact?: boolean;
 };
@@ -93,7 +69,7 @@ export default function GameRules({ compact = false }: Props) {
                   compact ? "text-base md:text-lg" : "text-lg md:text-xl"
                 }`}
               >
-                Game Overview & Rules
+                Game Overview
               </h2>
             </div>
             <span
@@ -147,42 +123,6 @@ export default function GameRules({ compact = false }: Props) {
               </li>
             ))}
           </ol>
-        </div>
-
-        {/* Quick reference rules */}
-        <div className={`${compact ? "mt-3" : "mt-4"}`}>
-          <h3
-            className={`font-bold uppercase tracking-wide text-lavender/90 ${
-              compact ? "text-xs" : "text-sm"
-            }`}
-          >
-            Quick Reference
-          </h3>
-          <div
-            className={`grid gap-3 md:grid-cols-2 ${
-              compact ? "mt-2" : "mt-3"
-            }`}
-          >
-            {RULES.map((rule) => (
-              <div
-                key={rule.title}
-                className={`rounded-xl border border-lilac/20 bg-surface-deep/40 ${
-                  compact ? "p-3" : "p-4"
-                }`}
-              >
-                <h4 className="text-sm font-bold uppercase tracking-wide text-amber-300">
-                  {rule.title}
-                </h4>
-                <p
-                  className={`text-snow/90 ${
-                    compact ? "mt-1.5 text-xs leading-5" : "mt-2 text-sm leading-6"
-                  }`}
-                >
-                  {rule.body}
-                </p>
-              </div>
-            ))}
-          </div>
         </div>
       </details>
     </div>
