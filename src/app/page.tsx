@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import Image from "next/image";
 import { useGameState } from "@/lib/useGameState";
 import { useFullscreen } from "@/lib/useFullscreen";
@@ -9,6 +9,7 @@ import ClueModal from "@/components/ClueModal";
 import GameRules from "@/components/GameRules";
 import TeamBar from "@/components/TeamBar";
 import FinalJeopardy from "@/components/FinalJeopardy";
+import TVTip from "@/components/TVTip";
 
 export default function Home() {
   const game = useGameState();
@@ -60,6 +61,14 @@ export default function Home() {
     }
   };
 
+  const openTVWindow = useCallback(() => {
+    window.open(
+      window.location.href,
+      "jesspardy-tv",
+      "width=1920,height=1080"
+    );
+  }, []);
+
   const isSetup = state.phase === "setup";
   const isBoard = state.phase === "board";
   const showClue = state.phase === "clue" || state.phase === "answer";
@@ -95,6 +104,9 @@ export default function Home() {
           )}
         </button>
       )}
+
+      {/* TV setup tip — shown when entering fullscreen */}
+      {isFullscreen && isPlayPhase && <TVTip onOpenTVWindow={openTVWindow} />}
 
       {/* Header — hidden in fullscreen play mode to save space */}
       {!(isFullscreen && isPlayPhase) && (
