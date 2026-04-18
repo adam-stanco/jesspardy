@@ -176,6 +176,17 @@ body::before {
   color: rgba(103, 84, 141, 0.62);
 }
 
+/* Fullscreen mode: fit entire board + teams on screen without scrolling */
+.fullscreen-board {
+  height: 100vh;
+  overflow: hidden;
+}
+
+.fullscreen-grid {
+  height: 100%;
+  grid-template-rows: auto repeat(5, 1fr);
+}
+
 .board-header {
   background: linear-gradient(180deg, rgba(86, 62, 129, 0.92) 0%, rgba(72, 51, 110, 0.96) 100%);
   border: 1px solid rgba(255, 255, 255, 0.12);
