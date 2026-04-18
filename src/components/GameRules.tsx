@@ -1,26 +1,44 @@
 "use client";
 
-// Quick reference for the host and teams during play.
-const RULES = [
+// In-app rules panel: short game overview plus a step-by-step "How A Round Works" list.
+
+const OVERVIEW = {
+  title: "What Is Jess-pardy?",
+  body: "Jess-pardy is a birthday-themed trivia game inspired by Jeopardy, built around facts, favorites, and inside jokes about Jess. Teams compete across five categories of Jess trivia, racking up (or losing) points on each question. The team with the most points after Final Jess-pardy wins.",
+};
+
+const HOW_IT_WORKS: { label: string; body: string }[] = [
   {
-    title: "Starting",
-    body: "Rock-Paper-Scissors decides who picks the first category.",
+    label: "Setup",
+    body: "Create at least two teams on the setup screen.",
   },
   {
-    title: "Gameplay",
-    body: "All teams can answer. Correct answers add points. Incorrect answers subtract points.",
+    label: "First Pick",
+    body: "Teams play Rock-Paper-Scissors to decide who picks first.",
   },
   {
-    title: "Turn Control",
-    body: "The team with the last correct answer picks next. If nobody got it right, the team with the highest score picks.",
+    label: "Choose Clue",
+    body: "The selecting team chooses a category and a point value from the 5x5 board.",
   },
   {
-    title: "Jess Challenges",
-    body: "Only the selecting team plays. A success earns double points, and there is no penalty for failing.",
+    label: "Answer",
+    body: "The host reads the clue. Each team records their answer on their provided white board (Jeopardy-style, in the form of a question is encouraged but not required).",
   },
   {
-    title: "Final Jeopardy",
-    body: "Each team can wager any amount up to its current total score.",
+    label: "Scoring",
+    body: "Correct answers add points to that team. Incorrect answers subtract the same amount.",
+  },
+  {
+    label: "Next Pick",
+    body: "Whoever answered correctly picks the next clue. If multiple teams get the answer right, the team with the highest score selects the next question. If nobody got it, the team currently in the lead picks next.",
+  },
+  {
+    label: "Jess Challenges",
+    body: "Some clues are Jess Challenges — only the selecting team plays, correct answers score double, and there is no penalty for a miss.",
+  },
+  {
+    label: "Final Jess-pardy",
+    body: "After every clue is played, the game moves to Final Jess-pardy. Teams secretly wager up to their current score, then answer one final clue to settle the winner.",
   },
 ];
 
@@ -44,14 +62,14 @@ export default function GameRules({ compact = false }: Props) {
                   compact ? "text-[0.65rem]" : "text-xs"
                 }`}
               >
-                Quick Reference
+                How To Play
               </p>
               <h2
                 className={`font-bold text-snow ${
                   compact ? "text-base md:text-lg" : "text-lg md:text-xl"
                 }`}
               >
-                Game Rules
+                Game Overview
               </h2>
             </div>
             <span
@@ -64,26 +82,47 @@ export default function GameRules({ compact = false }: Props) {
           </div>
         </summary>
 
-        <div className={`grid gap-3 md:grid-cols-2 ${compact ? "mt-3" : "mt-4"}`}>
-          {RULES.map((rule) => (
-            <div
-              key={rule.title}
-              className={`rounded-xl border border-lilac/20 bg-surface-deep/40 ${
-                compact ? "p-3" : "p-4"
-              }`}
-            >
-              <h3 className="text-sm font-bold uppercase tracking-wide text-amber-300">
-                {rule.title}
-              </h3>
-              <p
-                className={`text-snow/90 ${
-                  compact ? "mt-1.5 text-xs leading-5" : "mt-2 text-sm leading-6"
-                }`}
-              >
-                {rule.body}
-              </p>
-            </div>
-          ))}
+        {/* Overview */}
+        <div
+          className={`rounded-xl border border-lilac/30 bg-lavender/10 ${
+            compact ? "mt-3 p-3" : "mt-4 p-4"
+          }`}
+        >
+          <h3 className="text-sm font-bold uppercase tracking-wide text-amber-300">
+            {OVERVIEW.title}
+          </h3>
+          <p
+            className={`text-snow/90 ${
+              compact ? "mt-1.5 text-xs leading-5" : "mt-2 text-sm leading-6"
+            }`}
+          >
+            {OVERVIEW.body}
+          </p>
+        </div>
+
+        {/* How it works */}
+        <div
+          className={`rounded-xl border border-lilac/20 bg-surface-deep/40 ${
+            compact ? "mt-3 p-3" : "mt-4 p-4"
+          }`}
+        >
+          <h3 className="text-sm font-bold uppercase tracking-wide text-amber-300">
+            How A Round Works
+          </h3>
+          <ol
+            className={`list-decimal list-inside text-snow/90 space-y-1 ${
+              compact ? "mt-1.5 text-xs leading-5" : "mt-2 text-sm leading-6"
+            }`}
+          >
+            {HOW_IT_WORKS.map((step) => (
+              <li key={step.label}>
+                <span className="font-semibold text-amber-300">
+                  {step.label}:
+                </span>{" "}
+                {step.body}
+              </li>
+            ))}
+          </ol>
         </div>
       </details>
     </div>
