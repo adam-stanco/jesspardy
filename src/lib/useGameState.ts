@@ -1,4 +1,4 @@
-// Central game state hook with sessionStorage persistence
+// Central game state hook with localStorage persistence (shared across tabs/windows)
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
@@ -48,7 +48,7 @@ const initialState: GameState = {
 function loadState(): GameState {
   if (typeof window === "undefined") return initialState;
   try {
-    const raw = sessionStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) return JSON.parse(raw) as GameState;
   } catch {
     /* corrupted — start fresh */
@@ -61,16 +61,28 @@ export function useGameState() {
   const [hydrated, setHydrated] = useState(false);
 
   useEffect(() => {
-    // This mount flag keeps sessionStorage-backed UI from flashing during hydration.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setHydrated(true);
   }, []);
 
   useEffect(() => {
     if (hydrated) {
-      sessionStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     }
   }, [state, hydrated]);
+
+  // Sync state across browser tabs/windows via storage events
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === STORAGE_KEY && e.newValue) {
+        try {
+          setState(JSON.parse(e.newValue) as GameState);
+        } catch { /* ignore parse errors */ }
+      }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
 
   // --- Team management ---
 
@@ -259,7 +271,7 @@ export function useGameState() {
   // --- Reset ---
 
   const resetGame = useCallback(() => {
-    sessionStorage.removeItem(STORAGE_KEY);
+    localStorage.removeItem(STORAGE_KEY);
     setState(initialState);
   }, []);
 

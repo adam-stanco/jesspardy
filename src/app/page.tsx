@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import { useGameState } from "@/lib/useGameState";
+import { useFullscreen } from "@/lib/useFullscreen";
 import Board from "@/components/Board";
 import ClueModal from "@/components/ClueModal";
 import GameRules from "@/components/GameRules";
@@ -12,6 +13,7 @@ import FinalJeopardy from "@/components/FinalJeopardy";
 export default function Home() {
   const game = useGameState();
   const { state, hydrated } = game;
+  const { isFullscreen, toggle: toggleFullscreen } = useFullscreen();
   const [selectingTeam, setSelectingTeam] = useState<number | null>(null);
   const [resetMode, setResetMode] = useState(false);
   const [pendingQuestion, setPendingQuestion] = useState<{
@@ -71,43 +73,63 @@ export default function Home() {
   return (
     <div
       className={`flex-1 flex flex-col relative z-10 ${
-        isPlayPhase
-          ? "px-3 py-3 md:px-4 md:py-4 gap-3 md:gap-4"
-          : "p-4 md:p-6 gap-6"
+        isFullscreen && isPlayPhase
+          ? "fullscreen-board px-3 py-2 gap-1.5"
+          : isPlayPhase
+            ? "px-3 py-3 md:px-4 md:py-4 gap-3 md:gap-4"
+            : "p-4 md:p-6 gap-6"
       }`}
     >
-      {/* Header */}
-      <header className="text-center">
-        <div
-          className={`flex items-center justify-center mb-2 ${
-            isPlayPhase ? "gap-3" : "gap-4"
-          }`}
+      {/* Fullscreen toggle */}
+      {isPlayPhase && (
+        <button
+          onClick={toggleFullscreen}
+          className="fixed top-3 right-3 z-50 w-9 h-9 rounded-lg bg-surface-deep/70 hover:bg-surface-deep/90 border border-lilac/30 text-snow/80 hover:text-snow flex items-center justify-center transition-all cursor-pointer backdrop-blur-sm"
+          aria-label={isFullscreen ? "Exit full screen" : "Enter full screen for TV"}
+          title={isFullscreen ? "Exit full screen (F11)" : "Full screen for TV (F11)"}
         >
-          <span className="text-dusty/60 text-2xl animate-float">☽</span>
-          <Image
-            src="/jess-avatar.png"
-            alt="Jess"
-            width={isPlayPhase ? 56 : 72}
-            height={isPlayPhase ? 56 : 72}
-            className="rounded-full border-3 border-lilac shadow-lg shadow-lavender/30"
-          />
-          <span className="text-dusty/60 text-xl animate-float" style={{ animationDelay: "0.5s" }}>
-            ✦
-          </span>
-        </div>
-        <h1
-          className={`font-extrabold bg-gradient-to-r from-surface-deep via-glow-pink to-surface-deep bg-clip-text text-transparent animate-shimmer ${
-            isPlayPhase ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl"
-          }`}
-        >
-          Jess-pardy!
-        </h1>
-        <p className={`text-dusty mt-1 ${isPlayPhase ? "text-xs" : "text-sm"}`}>
-          Happy Birthday, Jess! 🎂
-        </p>
-      </header>
+          {isFullscreen ? (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3v3a2 2 0 0 1-2 2H3m18 0h-3a2 2 0 0 1-2-2V3m0 18v-3a2 2 0 0 1 2-2h3M3 16h3a2 2 0 0 1 2 2v3"/></svg>
+          ) : (
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18-5h-3a2 2 0 0 0-2 2v3m0 8v3a2 2 0 0 0 2 2h3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+          )}
+        </button>
+      )}
 
-      <GameRules compact={isPlayPhase} />
+      {/* Header — hidden in fullscreen play mode to save space */}
+      {!(isFullscreen && isPlayPhase) && (
+        <header className="text-center">
+          <div
+            className={`flex items-center justify-center mb-2 ${
+              isPlayPhase ? "gap-3" : "gap-4"
+            }`}
+          >
+            <span className="text-dusty/60 text-2xl animate-float">☽</span>
+            <Image
+              src="/jess-avatar.png"
+              alt="Jess"
+              width={isPlayPhase ? 56 : 72}
+              height={isPlayPhase ? 56 : 72}
+              className="rounded-full border-3 border-lilac shadow-lg shadow-lavender/30"
+            />
+            <span className="text-dusty/60 text-xl animate-float" style={{ animationDelay: "0.5s" }}>
+              ✦
+            </span>
+          </div>
+          <h1
+            className={`font-extrabold bg-gradient-to-r from-surface-deep via-glow-pink to-surface-deep bg-clip-text text-transparent animate-shimmer ${
+              isPlayPhase ? "text-3xl md:text-4xl" : "text-4xl md:text-5xl"
+            }`}
+          >
+            Jess-pardy!
+          </h1>
+          <p className={`text-dusty mt-1 ${isPlayPhase ? "text-xs" : "text-sm"}`}>
+            Happy Birthday, Jess! 🎂
+          </p>
+        </header>
+      )}
+
+      {!(isFullscreen && isPlayPhase) && <GameRules compact={isPlayPhase} />}
 
       {/* Team bar */}
       <TeamBar
@@ -117,6 +139,7 @@ export default function Home() {
         onAdjust={game.adjustScore}
         isSetup={isSetup}
         compact={isPlayPhase}
+        fullscreen={isFullscreen && isPlayPhase}
       />
 
       {/* Setup screen */}
@@ -141,11 +164,12 @@ export default function Home() {
 
       {/* Board */}
       {(isBoard || showClue) && (
-        <div className="flex flex-col flex-1 min-h-0 justify-start gap-3">
+        <div className={`flex flex-col min-h-0 justify-start ${isFullscreen ? "flex-1 gap-1" : "flex-1 gap-3"}`}>
           <Board
             answeredQuestions={state.answeredQuestions}
             resetMode={resetMode}
             compact
+            fullscreen={isFullscreen}
             onSelect={handleCellClick}
             onReset={handleQuestionReset}
           />
