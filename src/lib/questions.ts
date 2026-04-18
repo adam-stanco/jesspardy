@@ -237,8 +237,8 @@ export const QUESTIONS: Question[] = [
 ];
 
 export const FINAL_JEOPARDY: FinalJeopardyData = {
-  clue: "Draw her favorite pokemon. (Teams wager points first!)",
-  answer: "Jess confirms (Check if Gengar or Sylveon!)",
+  clue: "Draw her favorite pokemon.",
+  answer: "Jess will judge the responses.",
 };
 
 export function getQuestion(category: string, points: number): Question | undefined {

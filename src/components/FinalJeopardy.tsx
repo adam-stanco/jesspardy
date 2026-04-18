@@ -39,6 +39,7 @@ export default function FinalJeopardy({
 }: Props) {
   const allLocked = teams.every((_, i) => locked[i]);
   const allJudged = teams.every((_, i) => correct[i] !== null);
+  const STEP_AMOUNT = 100;
 
   if (phase === "winner") {
     const maxScore = Math.max(...teams.map((t) => t.score));
@@ -108,22 +109,36 @@ export default function FinalJeopardy({
                     </span>
                   ) : (
                     <div className="flex items-center gap-2">
-                      <input
-                        type="number"
-                        min={0}
-                        max={Math.max(team.score, 0)}
-                        value={wagers[i] ?? 0}
-                        onChange={(e) =>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          onSetWager(
+                            i,
+                            Math.max(0, (wagers[i] ?? 0) - STEP_AMOUNT)
+                          )
+                        }
+                        className="h-10 w-10 rounded-lg bg-surface-deep/60 border border-lilac/30 text-snow font-bold hover:bg-surface-deep/80 transition-colors cursor-pointer"
+                      >
+                        -
+                      </button>
+                      <div className="bg-surface-deep/60 border border-lilac/30 rounded-lg px-3 py-2 text-snow min-w-28 text-right">
+                        ${(wagers[i] ?? 0).toLocaleString()}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
                           onSetWager(
                             i,
                             Math.min(
-                              Math.max(0, Number(e.target.value)),
-                              Math.max(team.score, 0)
+                              Math.max(team.score, 0),
+                              (wagers[i] ?? 0) + STEP_AMOUNT
                             )
                           )
                         }
-                        className="bg-surface-deep/60 border border-lilac/30 rounded-lg px-3 py-2 text-snow w-28 text-right focus:outline-none focus:border-lavender"
-                      />
+                        className="h-10 w-10 rounded-lg bg-surface-deep/60 border border-lilac/30 text-snow font-bold hover:bg-surface-deep/80 transition-colors cursor-pointer"
+                      >
+                        +
+                      </button>
                       <button
                         onClick={() => onLockWager(i)}
                         className="bg-lavender hover:bg-lavender/80 text-surface-deep font-bold px-4 py-2 rounded-lg transition-all cursor-pointer"
@@ -169,12 +184,9 @@ export default function FinalJeopardy({
               </p>
             </div>
 
-            <div className="mb-6 bg-amber-500/10 border border-amber-400/30 rounded-xl p-4 text-center">
-              <p className="text-sm text-amber-300/80 uppercase tracking-wider mb-1">
-                Answer
-              </p>
-              <p className="text-lg text-amber-300 font-bold">{data.answer}</p>
-            </div>
+            <p className="text-amber-300 text-center mb-6 font-semibold">
+              {data.answer}
+            </p>
 
             <p className="text-snow text-center mb-4 text-sm">
               Judge each team: did they get it right?
