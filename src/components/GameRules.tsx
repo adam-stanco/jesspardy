@@ -8,15 +8,39 @@ const OVERVIEW = {
   body: "Jess-pardy is a birthday-themed trivia game inspired by Jeopardy, built around facts, favorites, and inside jokes about Jess. Teams compete across five categories of Jess trivia, racking up (or losing) points on each question. The team with the most points after Final Jess-pardy wins.",
 };
 
-const HOW_IT_WORKS = [
-  "Create at least two teams on the setup screen.",
-  "Teams play Rock-Paper-Scissors to decide who picks first.",
-  "The selecting team chooses a category and a point value from the 5x5 board.",
-  "The host reads the clue. Any team can shout out the answer (Jeopardy-style, in the form of a question is encouraged but not required).",
-  "Correct answers add points to that team. Incorrect answers subtract the same amount.",
-  "Whoever answered correctly picks the next clue. If nobody got it, the team currently in the lead picks next.",
-  "Some clues are Jess Challenges — only the selecting team plays, correct answers score double, and there is no penalty for a miss.",
-  "After every clue is played (or the host ends the round), the game moves to Final Jess-pardy. Teams secretly wager up to their current score, then answer one final clue to settle the winner.",
+const HOW_IT_WORKS: { label: string; body: string }[] = [
+  {
+    label: "Setup",
+    body: "Create at least two teams on the setup screen.",
+  },
+  {
+    label: "First Pick",
+    body: "Teams play Rock-Paper-Scissors to decide who picks first.",
+  },
+  {
+    label: "Choose Clue",
+    body: "The selecting team chooses a category and a point value from the 5x5 board.",
+  },
+  {
+    label: "Answer",
+    body: "The host reads the clue. Each team records their answer on their provided white board (Jeopardy-style, in the form of a question is encouraged but not required).",
+  },
+  {
+    label: "Scoring",
+    body: "Correct answers add points to that team. Incorrect answers subtract the same amount.",
+  },
+  {
+    label: "Next Pick",
+    body: "Whoever answered correctly picks the next clue. If multiple teams get the answer right, the team with the highest score selects the next question. If nobody got it, the team currently in the lead picks next.",
+  },
+  {
+    label: "Jess Challenges",
+    body: "Some clues are Jess Challenges — only the selecting team plays, correct answers score double, and there is no penalty for a miss.",
+  },
+  {
+    label: "Final Jess-pardy",
+    body: "After every clue is played, the game moves to Final Jess-pardy. Teams secretly wager up to their current score, then answer one final clue to settle the winner.",
+  },
 ];
 
 const RULES = [
@@ -115,7 +139,12 @@ export default function GameRules({ compact = false }: Props) {
             }`}
           >
             {HOW_IT_WORKS.map((step) => (
-              <li key={step}>{step}</li>
+              <li key={step.label}>
+                <span className="font-semibold text-amber-300">
+                  {step.label}:
+                </span>{" "}
+                {step.body}
+              </li>
             ))}
           </ol>
         </div>
