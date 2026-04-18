@@ -22,6 +22,14 @@ export default function Home() {
     points: number;
   } | null>(null);
 
+  const openTVWindow = useCallback(() => {
+    window.open(
+      window.location.href,
+      "jesspardy-tv",
+      "width=1920,height=1080"
+    );
+  }, []);
+
   if (!hydrated) {
     return (
       <div className="flex-1 flex items-center justify-center">
@@ -60,14 +68,6 @@ export default function Home() {
       setSelectingTeam(null);
     }
   };
-
-  const openTVWindow = useCallback(() => {
-    window.open(
-      window.location.href,
-      "jesspardy-tv",
-      "width=1920,height=1080"
-    );
-  }, []);
 
   const isSetup = state.phase === "setup";
   const isBoard = state.phase === "board";
